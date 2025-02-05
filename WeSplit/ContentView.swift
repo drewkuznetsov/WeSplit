@@ -9,22 +9,66 @@ import SwiftUI
 
 struct ContentView: View {
     
-    let stdents = ["Andrey", "Tania", "Vasia", "Petia"]
-    @State var currentStudent = "Andrey"
+    @State private var checkAmount = 100.0
+    @State private var numberOfPeople = 1
+    @State private var tipPecentage = 20
     
+    @FocusState private var amountIsFocused: Bool
+    
+    let tipPersentages = [5, 10, 15, 20, 0]
+    
+    var totalByPerson: Double {
+            return (checkAmount*(Double(tipPecentage)/100)) / Double(numberOfPeople + 1)
+        }
     
     var body: some View {
+        
         NavigationView {
+            
             Form {
-                Picker("Select your student", selection: $currentStudent) {
-                    ForEach(stdents, id: \.self) {
-                        Text($0)
+                Section("Check Amount") {
+                    TextField("Check Amount", value: $checkAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                        .keyboardType(.decimalPad)
+                        .focused($amountIsFocused)
+                }
+                
+                Section("Number of people") {
+                    Picker("Number of people", selection: $numberOfPeople) {
+                        ForEach(1..<100) {
+                            Text("\($0) people")
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                }
+                
+                Section("Tip Percent") {
+                    Picker("Tip Percent", selection: $tipPecentage) {
+                        ForEach(tipPersentages, id: \.self) {
+                            Text("\($0)")
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
+                Section("Tips Amount") {
+                    HStack {
+                        Text("Tips Amount:")
+                        Text(totalByPerson, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                     }
                 }
-                .pickerStyle(.inline)
-                Text(currentStudent)
             }
+            .navigationBarTitle("We Split")
+            .toolbar {
+                if amountIsFocused {
+                    Button("Done") {
+                        amountIsFocused = false
+                    }
+                }
+            }
+
+            
         }
+        
     }
 }
 
