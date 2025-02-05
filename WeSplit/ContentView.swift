@@ -28,7 +28,7 @@ struct ContentView: View {
             Form {
                 Section("Check Amount") {
                     TextField("Check Amount", value: $checkAmount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                        .keyboardType(.decimalPad)
+                        .keyboardType(.numberPad)
                         .focused($amountIsFocused)
                 }
                 
@@ -44,7 +44,7 @@ struct ContentView: View {
                 Section("Tip Percent") {
                     Picker("Tip Percent", selection: $tipPecentage) {
                         ForEach(tipPersentages, id: \.self) {
-                            Text("\($0)")
+                            Text($0, format: .percent)
                         }
                     }
                     .pickerStyle(.segmented)
